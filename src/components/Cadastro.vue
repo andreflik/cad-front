@@ -35,7 +35,7 @@
             <label for="uf">UF:</label>
             <input type="text" class="form-control" id="uf" v-model="pessoa.uf" required>
           </div>
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
       </b-modal>
     </div>
@@ -43,8 +43,16 @@
   
   <script>
   import axios from 'axios';
+  import { BModal } from 'bootstrap-vue';
   
   export default {
+    components: { BModal },
+    props: {
+        items: {
+            type: Array,
+            required: true
+        }
+    },
     data() {
       return {
         pessoa: {
@@ -61,25 +69,28 @@
     methods: {
       cadastrarPessoa() {
         axios.post('http://localhost:8000/api/pessoas', this.pessoa)
-        .then(response => {
-          this.$emit('pessoaCadastrada', response.data.pessoa);
-          this.$refs.cadastroModal.hide();
-          this.pessoa = {
-            nome: '',
-            email: '',
-            telefone: '',
-            data_nascimento: '',
-            sexo: '',
-            cidade: '',
-            uf: ''
-          };
-        })
-        .catch(error => {
-          console.log(error);
-        })
+          .then(response => {
+            // this.$emit('pessoaCadastrada', response.data.pessoa);
+            this.$emit('pessoaCadastrada', [response.data.pessoa]);
+            this.$refs.cadastroModal.hide();
+            this.pessoa = {
+              nome: '',
+              email: '',
+              telefone: '',
+              data_nascimento: '',
+              sexo: '',
+              cidade: '',
+              uf: ''
+            };
+          })
+          .catch(error => {
+            console.log(error);
+          })
       }
     }
   }
   </script>
+  
   <style scoped>
   </style>
+  
