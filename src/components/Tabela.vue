@@ -1,10 +1,12 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- eslint-disable vue/valid-v-else -->
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="container">
     <h1>Cadastro de Pessoas</h1>
     <div class="btn-toolbar-container">
       <div class="btn-toolbar">
-        <b-button variant="primary" @click="showModal">
+        <b-button variant="primary" @click="showModalCadastro">
           <b-icon icon="plus"></b-icon>
           Novo
         </b-button>
@@ -22,9 +24,16 @@
         </b-button>
       </div>
     </div>
-    <b-table :items="pessoas.items" striped hover :fields="fields">
-    </b-table>
-    
+    <b-table v-if="pessoas.items.length" :items="pessoas.items" striped hover :fields="fields" >
+  <template #table-busy>
+    <div class="text-center my-2">
+      <b-spinner variant="primary" label=""></b-spinner>
+    </div>
+  </template>
+</b-table>
+<div v-else class="text-center my-2">
+  <b-spinner variant="primary" label=""></b-spinner>
+</div>
     <b-modal v-model="showCadastroModal" title="Cadastro de Pessoa">
       <Cadastro @pessoaCadastrada="atualizarPessoas"/>
     </b-modal>
@@ -35,11 +44,11 @@
 
 <script>
 import axios from 'axios';
-import { BTable, BButton, BModal, BIcon} from 'bootstrap-vue';
+import { BTable, BButton, BModal, BIcon, BSpinner} from 'bootstrap-vue';
 import Cadastro from './Cadastro.vue';
 
 export default {
-  components: {BTable, BButton, BModal, BIcon, Cadastro},
+  components: {BTable, BButton, BModal, BIcon, BSpinner, Cadastro},
   data() {
     return {
       pessoas: { items: [] },
@@ -53,6 +62,8 @@ export default {
         { key: 'uf', label: 'UF' },
       ],
       showCadastroModal: false,
+      idSelecionado: null,
+      showEditarModal: false
     };
   },
   mounted() {
@@ -69,13 +80,17 @@ export default {
         console.log(error);
       })
     },
-    showModal() {
+    showModalCadastro() {
       this.showCadastroModal = true;
     },
     atualizarPessoas() {
       this.carregarPessoas();
     },
   },
+    editarPessoa(id) {
+      this.idSelecionado = id;
+  this.showEditarModal = true;
+    },
 }
 </script>
 

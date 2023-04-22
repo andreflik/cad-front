@@ -67,6 +67,7 @@
       };
     },
     methods: {
+      
       cadastrarPessoa() {
         axios.post('http://localhost:8000/api/pessoas', this.pessoa)
           .then(response => {
