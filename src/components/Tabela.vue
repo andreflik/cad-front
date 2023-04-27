@@ -6,36 +6,39 @@
     <h1>Cadastro de Pessoas</h1>
     <div class="btn-toolbar-container">
       <div class="btn-toolbar">
-        <b-button variant="primary" @click="showModalCadastro">
+        <b-button  variant="outline-secondary" @click="showModalCadastro">
           <b-icon icon="plus"></b-icon>
-          Novo
+          
         </b-button>
       </div>
     </div>
     <div class="btn-toolbar-container">
       <div class="btn-toolbar-2">
-        <b-button variant="warning"  @click="editarPessoa(data.item.id)" class="editar">
-          Editar
+        <b-button  variant="outline-secondary" @click="editarPessoa(data.item.id)" class="editar">
+          
           <b-icon icon="pencil"></b-icon>
         </b-button>
-        <b-button variant="danger"  @click="excluirPessoa(data.item.id)" class="excluir">
-          Excluir
+        <b-button variant="outline-secondary"  @click="excluirPessoa(data.item.id)" class="excluir">
+          
           <b-icon icon="trash"></b-icon>
         </b-button>
       </div>
     </div>
-    <b-table v-if="pessoas.items.length" :items="pessoas.items" striped hover :fields="fields" >
+    <b-table ref="tabela" v-if="pessoas.items.length" :items="pessoas.items" striped hover :fields="fields" >
   <template #table-busy>
     <div class="text-center my-2">
-      <b-spinner variant="primary" label=""></b-spinner>
+      <b-spinner  label=""></b-spinner>
     </div>
   </template>
 </b-table>
 <div v-else class="text-center my-2">
-  <b-spinner variant="primary" label=""></b-spinner>
+  <b-spinner  label=""></b-spinner>
 </div>
-    <b-modal v-model="showCadastroModal" title="Cadastro de Pessoa">
+    <!-- <b-modal v-model="showCadastroModal" title="Cadastro de Pessoa">
       <Cadastro @pessoaCadastrada="atualizarPessoas"/>
+    </b-modal> -->
+    <b-modal v-model="showCadastroModal" title="Cadastro de Pessoa">
+      <Cadastro :pessoas="pessoa" @pessoaCadastrada="atualizarPessoas"/>
     </b-modal>
   </div>
 </template>
@@ -63,11 +66,18 @@ export default {
       ],
       showCadastroModal: false,
       idSelecionado: null,
-      showEditarModal: false
+      showEditarModal: false,
+      pessoa: {},
     };
   },
   mounted() {
-    this.carregarPessoas()
+    this.carregarPessoas();
+
+    const tabela = this.$refs.tabela;
+      tabela.$el.addEventListener('click', (event) => {
+      const id = tabela.getRowId(event.target.closest('tr'));
+      this.idSelecionado = id;
+    })
   },
   methods: {
     carregarPessoas(){
@@ -86,11 +96,21 @@ export default {
     atualizarPessoas() {
       this.carregarPessoas();
     },
-  },
     editarPessoa(id) {
       this.idSelecionado = id;
-  this.showEditarModal = true;
+      console.log("idSelecionado:", this.idSelecionado);
+      this.showEditarModal = true;
     },
+    
+  },
+  watch: {
+      idSelecionado(newId) {
+        if (newId !== null) {
+          this.showEditarModal = true;
+        }
+      }
+    },
+    
 }
 </script>
 

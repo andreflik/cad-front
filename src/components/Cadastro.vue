@@ -1,27 +1,29 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- eslint-disable vue/no-mutating-props -->
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div>
       <b-modal id="cadastro-modal" ref="cadastroModal" title="Cadastro de Pessoa">
         <form @submit.prevent="cadastrarPessoa">
           <div class="form-group">
             <label for="nome">Nome:</label>
-            <input type="text" class="form-control" id="nome" v-model="pessoa.nome" required>
+            <input type="text" class="form-control" id="nome" v-model="nome" required>
           </div>
           <div class="form-group">
             <label for="email">E-mail:</label>
-            <input type="email" class="form-control" id="email" v-model="pessoa.email" required>
+            <input type="email" class="form-control" id="email" v-model="email" required>
           </div>
           <div class="form-group">
             <label for="telefone">Telefone:</label>
-            <input type="text" class="form-control" id="telefone" v-model="pessoa.telefone" required>
+            <input type="text" class="form-control" id="telefone" v-model="telefone" required>
           </div>
           <div class="form-group">
             <label for="data_nascimento">Data de Nascimento:</label>
-            <input type="date" class="form-control" id="data_nascimento" v-model="pessoa.data_nascimento" required>
+            <input type="date" class="form-control" id="data_nascimento" v-model="data_nascimento" required>
           </div>
           <div class="form-group">
             <label for="sexo">Sexo:</label>
-            <select class="form-control" id="sexo" v-model="pessoa.sexo" required>
+            <select class="form-control" id="sexo" v-model="sexo" required>
               <option value="">Selecione</option>
               <option value="M">Masculino</option>
               <option value="F">Feminino</option>
@@ -48,10 +50,10 @@
   export default {
     components: { BModal },
     props: {
-        items: {
-            type: Array,
-            required: true
-        }
+      pessoas: {
+        type: Object,
+        default: () => ({})
+      }
     },
     data() {
       return {
@@ -63,10 +65,26 @@
           sexo: '',
           cidade: '',
           uf: ''
-        }
+        },
+
       };
     },
+    
     methods: {
+      watch: {
+        pessoas: {
+          handler(pessoas) {
+            this.nome = pessoas.nome;
+            this.email = pessoas.email;
+            this.telefone = pessoas.telefone;
+            this.data_nascimento = pessoas.data_nascimento;
+            this.sexo = pessoas.sexo;
+            this.cidade = pessoas.cidade;
+            this.uf = pessoas.uf;
+          },
+          immediate: true
+        }
+      },
       
       cadastrarPessoa() {
         axios.post('http://localhost:8000/api/pessoas', this.pessoa)
